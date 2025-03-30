@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StayFinder - Find Your Perfect Stay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hero-section {
+            background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1501785888041-af3ef285b470');
+            background-size: cover;
+            background-position: center;
+        }
+        .listing-card:hover {
+            transform: translateY(-5px);
+            transition: transform 0.3s ease;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg fixed w-full z-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="text-2xl font-bold text-teal-600">StayFinder</div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button @click="toggleSearch" class="md:hidden p-2"><i class="bi bi-search"></i></button>
+                        <a href="#" class="hidden md:block hover:text-teal-600">Become a Host</a>
+                        <button @click="toggleMenu" class="p-2 hover:bg-gray-100 rounded-full">
+                            <i class="bi bi-list text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section h-screen flex items-center justify-center text-white">
+            <div class="max-w-4xl mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Find Your Perfect Stay</h1>
+                <div class="bg-white p-4 rounded-lg shadow-lg">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <input type="text" placeholder="Where are you going?" class="w-full p-3 border rounded text-gray-700">
+                        </div>
+                        <div class="flex-1">
+                            <input type="date" class="w-full p-3 border rounded text-gray-700">
+                        </div>
+                        <div class="flex-1">
+                            <select class="w-full p-3 border rounded text-gray-700">
+                                <option>1 Guest</option>
+                                <option>2 Guests</option>
+                                <option>3 Guests</option>
+                                <option>4+ Guests</option>
+                            </select>
+                        </div>
+                        <button class="bg-teal-600 text-white px-6 py-3 rounded hover:bg-teal-700">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Destinations -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8">Popular Destinations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div v-for="destination in popularDestinations" :key="destination.id" 
+                         class="relative rounded-lg overflow-hidden h-64 group cursor-pointer">
+                        <img :src="destination.image" :alt="destination.name" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-40 group-hover:bg-opacity-50 transition-all">
+                            <div class="absolute bottom-4 left-4 text-white">
+                                <h3 class="text-xl font-bold">{{ destination.name }}</h3>
+                                <p>{{ destination.properties }} properties</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Listings -->
+        <section class="py-16">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8">Featured Listings</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div v-for="listing in featuredListings" :key="listing.id" 
+                         class="listing-card bg-white rounded-lg overflow-hidden shadow-lg">
+                        <img :src="listing.image" :alt="listing.title" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-semibold">{{ listing.title }}</h3>
+                                <div class="flex items-center">
+                                    <i class="bi bi-star-fill text-yellow-400"></i>
+                                    <span class="ml-1">{{ listing.rating }}</span>
+                                </div>
+                            </div>
+                            <p class="text-gray-600 mb-2">{{ listing.location }}</p>
+                            <p class="text-gray-800 font-semibold">${{ listing.price }} / night</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4">
+                <h2 class="text-3xl font-bold mb-8 text-center">What Our Guests Say</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div v-for="review in testimonials" :key="review.id" 
+                         class="bg-white p-6 rounded-lg shadow">
+                        <div class="flex items-center mb-4">
+                            <img :src="review.avatar" :alt="review.name" 
+                                 class="w-12 h-12 rounded-full mr-4 object-cover">
+                            <div>
+                                <h4 class="font-semibold">{{ review.name }}</h4>
+                                <div class="flex text-yellow-400">
+                                    <i v-for="n in 5" :key="n" class="bi bi-star-fill"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">{{ review.comment }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white py-12">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold mb-4">StayFinder</h3>
+                        <p class="text-gray-400">Find your perfect stay anywhere in the world.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Company</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">About</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Press</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Support</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="text-gray-400 hover:text-white">Help Center</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Safety</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white">Cancellation options</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-4">Follow Us</h4>
+                        <div class="flex space-x-4">
+                            <a href="#" class="hover:text-teal-500"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="hover:text-teal-500"><i class="bi bi-twitter"></i></a>
+                            <a href="#" class="hover:text-teal-500"><i class="bi bi-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                    <p>&copy; 2023 StayFinder. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const { createApp } = Vue
+
+        createApp({
+            data() {
+                return {
+                    popularDestinations: [
+                        { id: 1, name: 'Paris, France', properties: 1234, image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34' },
+                        { id: 2, name: 'Tokyo, Japan', properties: 856, image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf' },
+                        { id: 3, name: 'New York, USA', properties: 2045, image: 'https://images.unsplash.com/photo-1522083165195-3424ed129620' }
+                    ],
+                    featuredListings: [
+                        { id: 1, title: 'Luxury Apartment', location: 'Downtown Paris', price: 199, rating: 4.9, image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267' },
+                        { id: 2, title: 'Beachfront Villa', location: 'Malibu, CA', price: 599, rating: 4.8, image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6' },
+                        { id: 3, title: 'Modern Loft', location: 'Manhattan, NY', price: 299, rating: 4.7, image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688' }
+                    ],
+                    testimonials: [
+                        { id: 1, name: 'Sarah Johnson', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80', comment: 'Amazing experience! The property was exactly as described and the host was very helpful.' },
+                        { id: 2, name: 'Michael Chen', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e', comment: 'StayFinder made booking our vacation rental super easy. Great service!' },
+                        { id: 3, name: 'Emma Wilson', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330', comment: 'We found the perfect place for our family vacation. Will definitely use StayFinder again!' }
+                    ]
+                }
+            },
+            methods: {
+                toggleMenu() {
+                    // Implement menu toggle functionality
+                },
+                toggleSearch() {
+                    // Implement search toggle functionality
+                }
+            }
+        }).mount('#app')
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
